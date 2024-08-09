@@ -1,20 +1,44 @@
+import axios from 'axios';
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+
+const url = "http://localhost:3000/user";
 
 const Adduser = () => {
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [role, setRole] = useState('');
-    const [address, setAddress] = useState('');
+  const navigate = useNavigate();
+  const [options, setOptions] = useState([]);
 
-    const handleSubmit = (e) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    phone: "",
+    lastname: "",
+    firstname: "",
+    role: "",
+    status:true,
+    address: "",
+
+   
+  });
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Logique pour soumettre les données
-        console.log({ email, phone, lastName, firstName, role, address });
+        console.log("formData", formData);
+   
+    console.log("formData", formData);
+    try {
+      const response = await axios.post(url, formData);
+      navigate("/");
+      console.log(response.data);
+    } catch (error) {
+      console.error("Erreur lors de l inscription:", error);
+    }
+        
       };
 
-
+      const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+        console.log(formData);
+      }; 
   return (
     <div className=" p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">Configuration</h2>
@@ -27,8 +51,9 @@ const Adduser = () => {
           <label className="block text-sm font-medium text-gray-700">Adresse e-mail</label>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formData.email}
+            name='email'
+            onChange={handleChange}
             className="mt-1 block w-11/12 border border-gray-300 rounded-md p-2"
             placeholder="alexander.foley@mail.com"
             required
@@ -38,8 +63,9 @@ const Adduser = () => {
           <label className="block text-sm font-medium text-gray-700">Numéro de téléphone</label>
           <input
             type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            name='phone'
+            value={formData.phone}
+            onChange={handleChange}
             className="mt-1 block w-11/12 border border-gray-300 rounded-md p-2"
             placeholder="(+237) 696 88 77 55"
             required
@@ -49,10 +75,11 @@ const Adduser = () => {
           <label className="block text-sm font-medium text-gray-700">Nom</label>
           <input
             type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            value={formData.lastname}
+            onChange={handleChange}
             className="mt-1 block w-11/12 border border-gray-300 rounded-md p-2"
-            placeholder="Nom"
+            placeholder="lastname"
+            name='lastname'
             required
           />
         </div>
@@ -60,19 +87,21 @@ const Adduser = () => {
           <label className="block text-sm font-medium text-gray-700">Prénom</label>
           <input
             type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            value={formData.firstname}
+            onChange={handleChange}
             className="mt-1 block w-11/12 border border-gray-300 rounded-md p-2"
             placeholder="Prénom"
+            name='firstname'
             required
           />
         </div>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">Rôle</label>
           <select
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
+            value={formData.role}
+            onChange={handleChange}
             className="mt-1 block w-11/12 border border-gray-300 rounded-md p-2 bg-white"
+            name='role'
             required
           >
             <option value="">Sélectionner un rôle</option>
@@ -85,10 +114,11 @@ const Adduser = () => {
           <label className="block text-sm font-medium text-gray-700">Adresse</label>
           <input
             type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            value={formData.address}
+            onChange={handleChange}
             className="mt-1 block w-11/12 border border-gray-300 rounded-md p-2"
             placeholder="Mariste, Dakar, Sénégal"
+            name='address'
             required
           />
         </div>

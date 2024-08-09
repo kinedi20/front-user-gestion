@@ -1,37 +1,46 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+ 
+const url = "http://localhost:3000/user";
 
 const Userlist = () => {
-  const users = [
-    {
-      lastName: "Alexander",
-      firstName: "Foley",
-      email: "alexander.foley@gmail.com",
-      role: "Admin",
-      status: "Actif",
-    },
-    {
-      lastName: "Alexander",
-      firstName: "Foley",
-      email: "alexander.foley@gmail.com",
-      role: "Agence",
-      status: "Actif",
-    },
-    {
-      lastName: "Alexander",
-      firstName: "Foley",
-      email: "alexander.foley@gmail.com",
-      role: "Mandataire",
-      status: "Inactif",
-    },
-    {
-      lastName: "Alexander",
-      firstName: "Foley",
-      email: "alexander.foley@gmail.com",
-      role: "Client",
-      status: "Actif",
-    },
-  ];
+  const navigate = useNavigate();
+ 
+  const [users, setUsers] = useState([]);
+
+  const deleteUser = async (user)=>{
+   
+    try {
+      const response = await axios.delete(url+"/"+user.id);
+
+      console.log(response.data);
+      setUsers(users.filter(u => u.id !== user.id));
+
+      // setError(null);
+    } catch (error) {}
+  };
+
+
+  
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(url);
+
+        console.log(response.data);
+
+        setUsers(response.data);
+
+        // setError(null);
+      } catch (error) {}
+    };
+
+    fetchData();
+  }, []);
+
+
   return (
     <div className="p-6 bg-gray-100 h-screen">
       <h1 className="text-3xl font-bold mb-4">Configuration</h1>
@@ -62,29 +71,30 @@ const Userlist = () => {
           {users.map((user, index) => (
             <tr key={index} className="hover:bg-gray-100">
               <td className="p-2 border-b-2  border-slate-300">
-                {user.lastName}
+                {user.lastname}
               </td>
               <td className="p-2 border-b-2  border-slate-300">
-                {user.firstName}
+                {user.firstname}
               </td>
               <td className="p-2 border-b-2  border-slate-300">{user.email}</td>
               <td className="p-2 border-b-2  border-slate-300">{user.role}</td>
               <td
                 className={`p-2  border-b-2  border-slate-300 ${
-                  user.status === "Actif" ? "text-green-500" : "text-red-500"
+                  user.status === true ? "text-green-500" : "text-red-500"
                 }`}
               >
-                {user.status}
+                {user.status ==true ? "Actif" : "Inactif"
+                 }
               </td>
               <td className="p-4 border-b-2  border-slate-300 flex gap-2 items-center ">
                 {/* <button className="text-blue-500 mr-2">VOIR</button> */}
-                <Link to="/user">
-                <button className="px-5 py-2 bg-transparent items-center justify-center flex border-2 border-sky-500 shadow-lg hover:bg-sky-500 text-sky-500 hover:text-white duration-300 cursor-pointer active:scale-[0.98] rounded-xl w-20">
+                {/* <Link to="/user"> */}
+                <button onClick={()=> navigate("/user", { state: { user } })} className="px-5 py-2 bg-transparent items-center justify-center flex border-2 border-sky-500 shadow-lg hover:bg-sky-500 text-sky-500 hover:text-white duration-300 cursor-pointer active:scale-[0.98] rounded-xl w-20">
                   Voir
                 </button>
-                </Link>
+                {/* </Link> */}
                 {/* <button className="text-red-500">Supprimer</button> */}
-                <button className="inline-flex items-center px-4 py-2 bg-red-600 transition ease-in-out delay-75 hover:bg-red-700 text-white text-sm font-medium hover:-translate-y-1 hover:scale-110  rounded-xl text-center">
+                <button onClick={()=> deleteUser(user)} className="inline-flex items-center px-4 py-2 bg-red-600 transition ease-in-out delay-75 hover:bg-red-700 text-white text-sm font-medium hover:-translate-y-1 hover:scale-110  rounded-xl text-center">
                   Supprimer
                 </button>
               </td>
